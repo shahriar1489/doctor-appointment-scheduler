@@ -2,10 +2,8 @@
 
 var mongoose = require('mongoose'), Schema = mongoose.Schema;
 
-
 let Patient = require("./patient")
-
-console.log(Patient);
+//console.log(Patient);
 
 // Doctor -> name, address (composite attribute) , speciality, phone - give address to patient
 var doctorSchema = Schema({
@@ -24,7 +22,7 @@ var doctorSchema = Schema({
     patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
     /*
     practice_type: { type: String, required: true, enum: ['Private Chamber', 'Private Clinic',], }, // enum the blood groups 
-*/
+    */
 });
 
 doctorSchema.statics.listAllDoctors = function () {

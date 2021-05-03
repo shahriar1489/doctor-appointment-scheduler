@@ -6,6 +6,7 @@ let mongoose = require("mongoose");
 //var carModel = require("./models/car")
 let patientModel = require("./models/patient")
 let doctorModel = require("./models/doctor")
+let appointmentModel = require('./models/appointment')
 
 //localhost:27017
 const port = 27017;
@@ -47,6 +48,15 @@ app.get("/patient", function (req, res) {
         res.error("Something went wrong!" + error);
     })
 })*/
+
+app.get("/appointment", function (req, res) {
+    patientModel.listAllAppointments().then(function (appointments) {
+        res.render("pages/appointment", { appointments: appointments });
+    }).catch(function (error) {
+        res.error("Something went wrong!" + error);
+    });
+})
+
 
 app.get("/patient", function (req, res) {
     patientModel.listAllPatients().then(function (patients) {
@@ -94,9 +104,15 @@ app.get("/senior_patient", function (req, res) {
     patientModel.
 })
 */
+
+app.get("/appointment_form", function (req, res) { // for patients
+    res.render("pages/appoinment_form.ejs");
+})
+
 app.get("/patient_form", function (req, res) {
     res.render("pages/patient_form.ejs");
 })
+
 
 app.get("/patient_custom_form", function (req, res) {
     res.render("pages/custom_query_patient.ejs")
