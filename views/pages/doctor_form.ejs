@@ -1,0 +1,43 @@
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <h1>Test Form:</h1>
+    <form method="post" action="/doctor">
+        First Name: <input type="text" name="doctor[first_name]"><br>
+        Last Name: <input type="text" name="doctor[last_name]"><br>
+
+        Present:
+        <input type="radio" id="yes" name="doctor[present]" value="true" checked>
+        <label for="yes">Yes</label>
+        <input type="radio" id="no" name="doctor[present]" value="false">
+        <label for="no">No</label><br>
+
+        Joined:<br>
+        <input type="date" name="doctor[date]">
+
+
+
+
+        <!--Urgency: <input type="checkbox" name=patient[urgent] value=><br>-->
+        <!-- Entry Date: <input type="text" name="car[color]"><br> -->
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
+
+_id = Schema.Types.ObjectId,
+
+first_name: { type: String, trim: true, required: true },
+last_name: { type: String, trim: true, required: true },
+//age: { type: Number, }, // add restriction
+
+present: { type: Boolean, required: true, }
+
+joined: { type: Date, default: Date.now, required: true },
+
+patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }]

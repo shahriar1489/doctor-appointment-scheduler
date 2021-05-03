@@ -1,0 +1,11 @@
+Things I want to do with AJAX: 
+
+1. Get data for the docotrs present. 
+2. Post them on the patient_form page
+
+--- 
+AJAX for query submission 
+
+1. When page loads, run query to find doctors present. 
+2. In real time, keep tab if doctors are present. 
+ 
