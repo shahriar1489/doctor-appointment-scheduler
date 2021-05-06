@@ -6,21 +6,33 @@
 
 <body>
     <h1>Test Form:</h1>
+
+    <P>first_name: { type: String, required: true, },
+        last_name: { type: String, required: true },
+
+        username: { type: String, required: true, }, //
+        passwordHash: { type: String },
+
+        age: { type: Number, required: true, },
+        blood_group: { type: String, required: true, enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], }, //
+        enum the blood groups</P>
+
     <form method="post" action="/patient">
         First Name: <input type="text" name="patient[first_name]"><br>
         Last Name: <input type="text" name="patient[last_name]"><br>
 
-
+        username: <input type="text" name="patient[username]"><br>
+        password: <input type='password' name='patient[password]'><br>
         Age: <input type="number" name="patient[age]"><br>
         Blood Group: <input type="text" name="patient[blood_group]"><br>
-
+        <!--
         Urgent:
         <input type="radio" id="yes" name="patient[urgent]" value="true" checked>
         <label for="yes">Yes</label>
         <input type="radio" id="no" name="patient[urgent]" value="false">
         <label for="no">No</label><br>
 
-
+-->
 
 
 

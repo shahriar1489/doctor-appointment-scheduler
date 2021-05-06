@@ -11,6 +11,8 @@ var appointmentSchema = Schema({
 
     taken: { type: Boolean, default: false },
     patient: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
+
+
     // day // Monday to Saturday... (should work as foreign key) -->> many appointment - one day
     /*
     practice_type: { type: String, required: true, enum: ['Private Chamber', 'Private Clinic',], }, // enum the blood groups 

@@ -14,19 +14,117 @@ const port = 27017;
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true })); // this line
 app.use(express.json());
-
+app.use(express.static('public')); // 
 
 // Set up default mongoose connection 
-var mongoDB = 'mongodb://127.0.0.1/my_database';
+var mongoDB = 'mongodb://127.0.0.1/new_database';
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Get the default connection 
 var db = mongoose.connection;
-
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+/* setup a session */
+var session = require('express-session');
+var FileStore = require('session-file-store')(session); // allows to store the file on client device...? 
 
+app.use(session({
+    name: 'server-session-cookie-id',
+    secret: 'my express secret <usually keyboard cat>',
+    saveUninitialized: true,
+    resave: true,
+    store: new FileStore()
+}));
+
+
+/* initialize passport */
+const passport = require("passport");
+app.use(passport.initialize());
+app.use(passport.session());
+
+/* convert user object into id that is saved in the session */
+passport.serializeUser(function (user, done) {
+    done(null, user._id);
+});
+
+/* takes userId from session and loads whole user object from the database */
+passport.deserializeUser(function (userId, done) {
+    Patient.findById(userId, (err, user) => done(err, user));
+});
+
+// setup "local" playin username / password strategy  
+const LocalStrategy = require("passport-local").Strategy;
+
+
+const local = new LocalStrategy((username, password, done) => {
+    //lookup user in database, and check the provided password
+    Patient.findOne({ username })
+        .then(user => {
+            if (!user || !user.validPassword(password)) {
+                done(null, false, { message: "Invalid username/password" });
+            } else {
+                done(null, user);
+            }
+        })
+        .catch(e => done(e));
+
+    //lookup patient (by ID) in database, and check the provided password 
+    /*
+    
+    */
+});
+passport.use("local", local);
+
+// local strategy register, checks for existing username, otherwise saves username and password
+app.post('/patient', function (req, res) {
+
+    // Take all the patient information first 
+    var username = req.body.patient.username;
+    var password = req.body.patient.password;
+    //const password = req.body.patient.password;
+
+    var first_name = req.body.patient.first_name;
+    var last_name = req.body.patient.last_name;
+
+    var blood = req.body.patient.blood;
+    var age = req.body.patient.age;
+
+    //console.log("Doctor: " + JSON.stringify(req.body.doctor));
+    //var newDoctor = new doctorModel(req.body.doctor); // Q. What is this doing? 
+
+    //var newPatient = new patientModel(req.body.patient); // with the password 
+    /* 
+    The line above was good to create patient without verification. But since we are using password 
+    and (unique) username, we now use a different way to save 
+    */
+    //SR: Below, we pass a tuple of all the 
+
+    patientModel.create({
+        username: username, password: password,
+        first_name: first_name, last_name: last_name,
+        blood: blood, age: age
+    }).then(user => { // I need to pass the created model. What will it be? 
+        console.log("Registered patient: " + username);
+        req.login(user, err => {
+            if (err) next(err);
+            else res.redirect("/");
+        });
+    }).catch(err => {
+        if (err.name === "ValidationError") {
+            console.log("Sorry, that patient username for is already taken.");
+            res.redirect("/register");
+        } else next(err);
+    });
+
+
+    // I have to find a way to save this 
+});
+
+
+
+
+// local strategy register, checks for existing username, otherwise saves username and password
 app.get("/form", function (req, res) {
     res.render("pages/form");
 });
@@ -50,11 +148,11 @@ app.get("/patient", function (req, res) {
 })*/
 
 app.get("/appointment", function (req, res) {
-    patientModel.listAllAppointments().then(function (appointments) {
-        res.render("pages/appointment", { appointments: appointments });
-    }).catch(function (error) {
-        res.error("Something went wrong!" + error);
-    });
+    //patientModel.listAllAppointments().then(function (appointments) {
+    res.render("pages/appointment")//, { appointments: appointments });
+    //}).catch(function (error) {
+    res.error("Something went wrong!" + error);
+    //});
 })
 
 
@@ -165,7 +263,7 @@ app.get("/doctor_form", function (req, res) {
 app.get("/", function (req, res) {
     //res.send('no more hellos, please!')
     console.log(`GET (/) request at ${Date.now}`)
-    res.render("pages/index.ejs");
+    res.render("pages/appointments.ejs");
 });
 
 
@@ -180,7 +278,7 @@ app.post('/car', function (req, res) {
     });
 });
 
-
+/*
 // post patient: .save - .then() is part of the promise notation
 app.post('/patient', function (req, res) {
     console.log("Patient: " + JSON.stringify(req.body.patient)); // how we get data from client
@@ -199,7 +297,7 @@ app.post('/patient', function (req, res) {
         res.err("Failed to add new patient to database!");
     })
 })
-
+*/
 app.post('doctor', function (req, res) {
     console.log("Doctor: " + JSON.stringify(req.body.doctor));
     var newDoctor = new doctorModel(req.body.doctor);
