@@ -59,7 +59,7 @@ const LocalStrategy = require("passport-local").Strategy;
 
 const local = new LocalStrategy((username, password, done) => {
     //lookup user in database, and check the provided password
-    Patient.findOne({ username })
+    patientModel.findOne({ username })
         .then(user => {
             if (!user || !user.validPassword(password)) {
                 done(null, false, { message: "Invalid username/password" });
@@ -132,7 +132,17 @@ app.post('/patient', function (req, res) {
     // I have to find a way to save this 
 });
 
+// login, username and password are extracted from the post request
+app.post("/patient_login",
+    passport.authenticate("local", { // 
+        successRedirect: "/",
+        failureRedirect: "/patient_login"
+    })
+);
 
+app.get("/patient_login", function (req, res) {
+    res.render("pages/patient_login");
+});
 
 
 // local strategy register, checks for existing username, otherwise saves username and password
@@ -174,6 +184,7 @@ app.get("/patient", function (req, res) {
         res.error("Something went wrong!" + error);
     });
 })
+
 
 app.get("/doctor", function (req, res) {
     doctorModel.listAllDoctors().then(function (doctors) {
