@@ -87,8 +87,19 @@ app.post('/patient', function (req, res) {
     var first_name = req.body.patient.first_name;
     var last_name = req.body.patient.last_name;
 
-    var blood = req.body.patient.blood;
+    var blood_group = req.body.patient.blood_group;
     var age = req.body.patient.age;
+
+    var username = req.body.patient.username;
+    var password = req.body.patient.password;
+    //const password = req.body.patient.password;
+
+    console.log('first_name: ' + first_name);
+    console.log('last_name: ' + last_name);
+    console.log('username: ' + username);
+    console.log('blood: ' + blood_group);
+    console.log('age: ' + age)
+
 
     //console.log("Doctor: " + JSON.stringify(req.body.doctor));
     //var newDoctor = new doctorModel(req.body.doctor); // Q. What is this doing? 
@@ -103,7 +114,7 @@ app.post('/patient', function (req, res) {
     patientModel.create({
         username: username, password: password,
         first_name: first_name, last_name: last_name,
-        blood: blood, age: age
+        blood_group: blood_group, age: age
     }).then(user => { // I need to pass the created model. What will it be? 
         console.log("Registered patient: " + username);
         req.login(user, err => {
@@ -112,8 +123,8 @@ app.post('/patient', function (req, res) {
         });
     }).catch(err => {
         if (err.name === "ValidationError") {
-            console.log("Sorry, that patient username for is already taken.");
-            res.redirect("/register");
+            console.log("Sorry, that username for is already taken.");
+            res.redirect("/");
         } else next(err);
     });
 

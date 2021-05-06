@@ -2,9 +2,8 @@
 let mongoose = require('mongoose'), Schema = mongoose.Schema;
 const uniqueValidator = require("mongoose-unique-validator");
 const findOrCreate = require('mongoose-findorcreate')
+const bcrypt = require("bcrypt");
 
-
-let Doctor = require("./doctor")
 
 let patientSchema = new mongoose.Schema({
     //doctor: { type: Schema.Types.ObjectId, ref: 'Doctor' }, // keeping mongoose.ObjectId, returns no error
