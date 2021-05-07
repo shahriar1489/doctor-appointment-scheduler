@@ -18,14 +18,14 @@ var appointmentSchema = Schema({
     doctor: [], // one doctor 
 
     // day // Monday to Saturday... (should work as foreign key) -->> many appointment - one day
-    /*
-    practice_type: { type: String, required: true, enum: ['Private Chamber', 'Private Clinic',], }, // enum the blood groups 
-    */
 });
 
 appointmentSchema.statics.listAllAppointments = function () {
     return this.find({});
 };
+
+//appointmentSchema.statics.
+
 
 var appointmentModel = mongoose.model('appointment', appointmentSchema);
 

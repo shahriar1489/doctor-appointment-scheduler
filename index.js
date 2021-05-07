@@ -35,7 +35,6 @@ app.use(session({
     store: new FileStore()
 }));
 
-
 /* initialize passport */
 const passport = require("passport");
 app.use(passport.initialize());
@@ -48,10 +47,21 @@ passport.serializeUser(function (user, done) {
 
 /* takes userId from session and loads whole user object from the database */
 passport.deserializeUser(function (userId, done) {
+    var patientFound = false;
     // Search patient,
-    Patient.findById(userId, (err, user) => done(err, user));
+    Patient.findById(userId, (err, user) => {
+        console.log('In callback for Patient deserialization')
+
+        done(err, user)
+    });
 
     // if patient not found, search doctor
+
+    if (!patientFound) {
+        // look for Doctor now 
+
+    }
+
 });
 
 // setup "local" playin username / password strategy  
@@ -69,22 +79,77 @@ const local = new LocalStrategy((username, password, done) => {
             }
         })
         .catch(e => done(e));
-
-
-
-
     //lookup patient (by ID) in database, and check the provided password 
     /*
-    
+   
     */
-
-
 });
 
 passport.use("local", local);
 
+app.post('/set_appointment', function (req, res) {
+    // 1. Get the current date and day 
+    d = new Date();
+
+    // 2. i = d.getDay()+1  : set appointments from tomorrow 
+
+    // Logic: Sunday is 0, Monday is 1, and so on. 
+    var seven = 7;
+    var n;
+    for (i = d.getDay() + 1; ; i++) {
+        n = i;
+        if (i > 6) {
+            n = seven - i;
+        }
+        console.log(n);
+    }
+    // 3. Render to appointment page 
+});
+
+
+
+
+
+
+app.post('/doctor', function (req, res) { // for patient registration
+
+    var email = req.body.doctor.email;
+    var password = req.body.doctor.password;
+
+    var first_name = req.body.doctor.first_name;
+    var last_name = req.body.doctor.last_name;
+
+    var specialization = req.body.doctor.specialization;
+    var qualification = req.body.doctor.qualification;
+
+    console.log('first_name: ' + first_name);
+    console.log('last_name: ' + last_name);
+
+    doctorModel.create({
+        email: email, password: password,
+        first_name: first_name, last_name: last_name,
+        specialization: specialization, qualification: qualification
+
+    }).then(user => { // I need to pass the created model. What will it be? 
+        console.log("Registered doctor, email: " + email);
+        req.login(user, err => {
+            if (err) next(err);
+            else res.redirect("/");
+        });
+    }).catch(err => {
+        if (err.name === "ValidationError") {
+            console.log("Sorry, that email for doctor registration for is already taken.");
+            res.redirect("/");
+        } else next(err);
+    });
+
+    // I have to find a way to save this 
+});
+
+
+
 // local strategy register, checks for existing username, otherwise saves username and password
-app.post('/patient', function (req, res) {
+app.post('/patient', function (req, res) { // for patient registration
 
     // Take all the patient information first 
     var username = req.body.patient.username;
@@ -134,9 +199,6 @@ app.post('/patient', function (req, res) {
             res.redirect("/");
         } else next(err);
     });
-
-
-    // I have to find a way to save this 
 });
 
 // login, username and password are extracted from the post request
@@ -165,15 +227,6 @@ app.get("/garage", function (req, res) {
     }).catch(function (error) {
         res.error("Something went wrong!" + error);
     });
-})*/
-
-/* // ERROR!
-app.get("/patient", function (req, res) {
-    patientModel.listAllPatients().then(function () {
-        res.render("pages/patient", { patients: patients })
-    }).catch(function (error) {
-        res.error("Something went wrong!" + error);
-    })
 })*/
 
 app.get("/appointment", function (req, res) {
@@ -213,25 +266,6 @@ app.get("/senior_patient", function (req, res) {
         res.error("Something went wrong!" + error);
     });
 })
-
-
-
-/*
-const getDocument = async () => {
-    try {
-        var query = await patient
-    } catch (err) {
-        console.log(err)
-    }
-}*/
-
-/*
-let allPatient = await patientModel.find({});
-console.log(allPatient);
-app.get("/senior_patient", function (req, res) {
-    patientModel.
-})
-*/
 
 app.get("/appointment_form", function (req, res) { // for patients
     res.render("pages/appoinment_form.ejs");
@@ -405,8 +439,6 @@ app.post('/patient_urgent', function (req, res) { //4/17/2021
     //console.log('' q.length);
 })
 */
-
-
 
 // post doctor
 app.post('/doctor', function (req, res) {
