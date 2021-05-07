@@ -7,11 +7,13 @@ let Patient = require("./appointment")
 var appointmentSchema = Schema({
     valid: { type: Boolean, default: true }, // -->> the doctor overrides this 
     message_from_doctor: { type: String, trim: true, },
+
+    date_time: {}
     //take: { type: Date, default: Date.now, required: true }, ->> create 10 appointments per day 
 
     taken: { type: Boolean, default: false },
-    patient: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
-
+    patient: [{ type: Schema.Types.ObjectId, ref: 'Patient' }], // one patient 
+    doctor: // one doctor 
 
     // day // Monday to Saturday... (should work as foreign key) -->> many appointment - one day
     /*

@@ -11,15 +11,17 @@ var doctorSchema = Schema({
 
     first_name: { type: String, trim: true, required: true },
     last_name: { type: String, trim: true, required: true },
-    //age: { type: Number, }, // add restriction
+    age: { type: Number, }, // add restriction
+    qualification: { type: String, required: true, trim: true },
+    specialization: { type: String, required: true, trim: true },
     /*
         profile_picture: 
     */
-    present: { type: Boolean, required: true, },
+    //present: { type: Boolean, required: true, },
 
-    joined: { type: Date, default: Date.now, required: true },
+    //joined: { type: Date, default: Date.now, required: true },
 
-    patients: [{ type: Schema.Types.ObjectId, ref: 'Patient' }],
+    appintments: []//
     /*
     practice_type: { type: String, required: true, enum: ['Private Chamber', 'Private Clinic',], }, // enum the blood groups 
     */

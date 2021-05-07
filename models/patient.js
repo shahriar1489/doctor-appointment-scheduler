@@ -20,6 +20,7 @@ let patientSchema = new mongoose.Schema({
         //urgent: { type: Boolean, required: true, default: true },
     */
 
+    appointments: [] // one patient can have many appointments     
 });
 
 

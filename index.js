@@ -3,12 +3,10 @@ let app = express();
 let mongoose = require("mongoose");
 
 // call the models 
-//var carModel = require("./models/car")
 let patientModel = require("./models/patient")
 let doctorModel = require("./models/doctor")
 let appointmentModel = require('./models/appointment')
 
-//localhost:27017
 const port = 27017;
 
 app.set("view engine", "ejs");
@@ -50,7 +48,10 @@ passport.serializeUser(function (user, done) {
 
 /* takes userId from session and loads whole user object from the database */
 passport.deserializeUser(function (userId, done) {
+    // Search patient,
     Patient.findById(userId, (err, user) => done(err, user));
+
+    // if patient not found, search doctor
 });
 
 // setup "local" playin username / password strategy  
@@ -69,11 +70,17 @@ const local = new LocalStrategy((username, password, done) => {
         })
         .catch(e => done(e));
 
+
+
+
     //lookup patient (by ID) in database, and check the provided password 
     /*
     
     */
+
+
 });
+
 passport.use("local", local);
 
 // local strategy register, checks for existing username, otherwise saves username and password
@@ -145,11 +152,12 @@ app.get("/patient_login", function (req, res) {
 });
 
 
+/*
 // local strategy register, checks for existing username, otherwise saves username and password
 app.get("/form", function (req, res) {
     res.render("pages/form");
 });
-
+*/
 /*
 app.get("/garage", function (req, res) {
     carModel.listAllCars().then(function (cars) {
@@ -363,6 +371,7 @@ app.post('/custom_query_patient', function (req, res) {
     //console.log('' q.length);
 })
 
+/*
 app.post('/patient_urgent', function (req, res) { //4/17/2021
     console.log(JSON.stringify(req.body))
     //console.log(JSON.stringify(req.body.patient))
@@ -395,7 +404,7 @@ app.post('/patient_urgent', function (req, res) { //4/17/2021
     });
     //console.log('' q.length);
 })
-
+*/
 
 
 
