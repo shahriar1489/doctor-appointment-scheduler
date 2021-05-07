@@ -8,23 +8,19 @@ let Patient = require("./patient")
 // Doctor -> name, address (composite attribute) , speciality, phone - give address to patient
 var doctorSchema = Schema({
     //_id = Schema.Types.ObjectId,
+    email: { type: String, trim: true, required: true, unique: true },
 
     first_name: { type: String, trim: true, required: true },
     last_name: { type: String, trim: true, required: true },
-    age: { type: Number, }, // add restriction
+    // age: { type: Number, }
     qualification: { type: String, required: true, trim: true },
     specialization: { type: String, required: true, trim: true },
-    /*
-        profile_picture: 
-    */
-    //present: { type: Boolean, required: true, },
 
-    //joined: { type: Date, default: Date.now, required: true },
-
-    appintments: []//
+    //appointments: []//
     /*
-    practice_type: { type: String, required: true, enum: ['Private Chamber', 'Private Clinic',], }, // enum the blood groups 
+        profile_picture + location
     */
+
 });
 
 doctorSchema.statics.listAllDoctors = function () {
