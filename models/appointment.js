@@ -14,8 +14,8 @@ var appointmentSchema = Schema({
     //take: { type: Date, default: Date.now, required: true }, ->> create 10 appointments per day 
 
     taken: { type: Boolean, default: false },
-    patient: [{ type: Schema.Types.ObjectId, ref: 'Patient' }], // one patient 
-    doctor: [], // one doctor 
+    patient: { type: Schema.Types.ObjectId, ref: 'Patient' }, // one patient 
+    doctor: { type: Schema.Types.ObjectId, ref: 'Patient' }, // one doctor 
 
     // day // Monday to Saturday... (should work as foreign key) -->> many appointment - one day
 });

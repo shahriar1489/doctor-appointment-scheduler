@@ -11,16 +11,17 @@ let patientSchema = new mongoose.Schema({
     first_name: { type: String, required: true, },
     last_name: { type: String, required: true },
 
-    username: { type: String, required: true, unique: true }, //
+    email: { type: String, required: true, unique: true }, //
     passwordHash: { type: String },
 
     age: { type: Number, required: true, },
-    blood_group: { type: String, required: true, enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], }, // enum the blood groups  
+    blood_group: { type: String, required: true, enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] }, // enum the blood groups  
     /*
         //urgent: { type: Boolean, required: true, default: true },
     */
+    role: { type: String, required: true, enum: ['doctor', 'patient'] },
 
-    appointments: [] // one patient can have many appointments     
+    appointments: [],//  one patient can have many appointments     
 });
 
 

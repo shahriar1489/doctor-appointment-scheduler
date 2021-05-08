@@ -1,6 +1,7 @@
 let express = require("express");
 let app = express();
 let mongoose = require("mongoose");
+const checkLogin = require("./middlewares/checkLogin");
 
 // call the models 
 let patientModel = require("./models/patient")
@@ -22,6 +23,8 @@ mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+// Authentication code is below 
 
 /* setup a session */
 var session = require('express-session');
@@ -51,23 +54,12 @@ passport.deserializeUser(function (userId, done) {
     // Search patient,
     Patient.findById(userId, (err, user) => {
         console.log('In callback for Patient deserialization')
-
         done(err, user)
     });
-
-    // if patient not found, search doctor
-
-    if (!patientFound) {
-        // look for Doctor now 
-
-    }
-
 });
 
 // setup "local" playin username / password strategy  
 const LocalStrategy = require("passport-local").Strategy;
-
-
 const local = new LocalStrategy((username, password, done) => {
     //lookup user in database, and check the provided password
     patientModel.findOne({ username })
@@ -86,7 +78,7 @@ const local = new LocalStrategy((username, password, done) => {
 });
 
 passport.use("local", local);
-
+/*
 app.post('/set_appointment', function (req, res) {
     // 1. Get the current date and day 
     d = new Date();
@@ -103,11 +95,14 @@ app.post('/set_appointment', function (req, res) {
         }
         console.log(n);
     }
+
     // 3. Render to appointment page 
+
+
 });
+*/
 
-
-
+// copy the code above to patient.js in routes 
 
 
 
@@ -147,6 +142,20 @@ app.post('/doctor', function (req, res) { // for patient registration
 });
 
 
+// Use the code from patient model
+app.post('doctor', function (req, res) {
+    console.log("Doctor: " + JSON.stringify(req.body.doctor));
+    var newDoctor = new doctorModel(req.body.doctor);
+
+    newDoctor.save().then(function () {
+        res.redirect("/doctor")
+    }).catch(function (err) {
+        res.err("Failed to add new patient to db!")
+    })
+})
+
+
+
 
 // local strategy register, checks for existing username, otherwise saves username and password
 app.post('/patient', function (req, res) { // for patient registration
@@ -177,16 +186,17 @@ app.post('/patient', function (req, res) { // for patient registration
     //var newDoctor = new doctorModel(req.body.doctor); // Q. What is this doing? 
 
     //var newPatient = new patientModel(req.body.patient); // with the password 
-    /* 
-    The line above was good to create patient without verification. But since we are using password 
-    and (unique) username, we now use a different way to save 
-    */
+
+    //The line above was good to create patient without verification. But since we are using password 
+    //and (unique) username, we now use a different way to save 
+
     //SR: Below, we pass a tuple of all the 
 
     patientModel.create({
         username: username, password: password,
         first_name: first_name, last_name: last_name,
-        blood_group: blood_group, age: age
+        blood_group: blood_group, age: age,
+        role: 'patient'
     }).then(user => { // I need to pass the created model. What will it be? 
         console.log("Registered patient: " + username);
         req.login(user, err => {
@@ -219,26 +229,18 @@ app.get("/patient_login", function (req, res) {
 app.get("/form", function (req, res) {
     res.render("pages/form");
 });
-*/
-/*
-app.get("/garage", function (req, res) {
-    carModel.listAllCars().then(function (cars) {
-        res.render("pages/garage", { cars: cars });
-    }).catch(function (error) {
-        res.error("Something went wrong!" + error);
-    });
-})*/
 
-app.get("/appointment", function (req, res) {
+
+app.get("/get_appointment", function (req, res) {
     //patientModel.listAllAppointments().then(function (appointments) {
     res.render("pages/appointment")//, { appointments: appointments });
     //}).catch(function (error) {
     res.error("Something went wrong!" + error);
     //});
 })
+*/
 
-
-app.get("/patient", function (req, res) {
+app.get("/patient", checkLogin, function (req, res) {
     patientModel.listAllPatients().then(function (patients) {
         res.render("pages/patient", { patients: patients });
     }).catch(function (error) {
@@ -362,18 +364,6 @@ app.post('/patient', function (req, res) {
     })
 })
 */
-app.post('doctor', function (req, res) {
-    console.log("Doctor: " + JSON.stringify(req.body.doctor));
-    var newDoctor = new doctorModel(req.body.doctor);
-
-    newDoctor.save().then(function () {
-        res.redirect("/doctor")
-    }).catch(function (err) {
-        res.err("Failed to add new patient to db!")
-    })
-})
-
-
 
 app.post('/custom_query_patient', function (req, res) {
     console.log(JSON.stringify(req.body))
