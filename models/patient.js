@@ -63,6 +63,12 @@ patientSchema.statics.patientIsUrgent = function () { // 4/17/2021
     return this.find({ urgent: true });
 }
 
+patientSchema.statics.patientEmail = function (email) { // 4/17/2021 
+    // custom query goes here: for urgent=true 
+    return this.find({ email: { email });
+}
+
+
 
 var patientModel = mongoose.model('patient', patientSchema);
 

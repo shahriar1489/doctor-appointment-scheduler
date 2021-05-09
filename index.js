@@ -105,7 +105,7 @@ app.post('/set_appointment', function (req, res) {
 // copy the code above to patient.js in routes 
 
 
-
+/*
 app.post('/doctor', function (req, res) { // for patient registration
 
     var email = req.body.doctor.email;
@@ -140,7 +140,7 @@ app.post('/doctor', function (req, res) { // for patient registration
 
     // I have to find a way to save this 
 });
-
+*/
 
 // Use the code from patient model
 app.post('doctor', function (req, res) {
@@ -213,6 +213,9 @@ app.post('/patient', function (req, res) { // for patient registration
 
 // login, username and password are extracted from the post request
 app.post("/patient_login",
+
+
+
     passport.authenticate("local", { // 
         successRedirect: "/",
         failureRedirect: "/patient_login"
@@ -222,23 +225,6 @@ app.post("/patient_login",
 app.get("/patient_login", function (req, res) {
     res.render("pages/patient_login");
 });
-
-
-/*
-// local strategy register, checks for existing username, otherwise saves username and password
-app.get("/form", function (req, res) {
-    res.render("pages/form");
-});
-
-
-app.get("/get_appointment", function (req, res) {
-    //patientModel.listAllAppointments().then(function (appointments) {
-    res.render("pages/appointment")//, { appointments: appointments });
-    //}).catch(function (error) {
-    res.error("Something went wrong!" + error);
-    //});
-})
-*/
 
 app.get("/patient", checkLogin, function (req, res) {
     patientModel.listAllPatients().then(function (patients) {
@@ -261,6 +247,21 @@ app.get("/doctor", function (req, res) {
 
 app.get("/senior_patient", function (req, res) {
     // I get the query parameter from a POST request... 
+    /*
+    patientSchema.statics.patientEmail = function (email) { // 4/17/2021 
+        // custom query goes here: for urgent=true 
+        return this.find({ email: { email });
+    }*/
+
+    var email = null;
+    patientModel.patientEmail(email).then(function (patients) {
+        res.render("pages/patient", { patients: patients });
+
+    }).catch(function (error) {
+        res.error("Something went wrong!" + error);
+    });
+
+
     patientModel.patientAge(65).then(function (patients) {
         res.render("pages/patient", { patients: patients });
 
