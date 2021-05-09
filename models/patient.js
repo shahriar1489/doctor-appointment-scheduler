@@ -11,7 +11,7 @@ let patientSchema = new mongoose.Schema({
     first_name: { type: String, required: true, },
     last_name: { type: String, required: true },
 
-    email: { type: String, required: true, unique: true }, //
+    username: { type: String, required: true, unique: true }, //
     passwordHash: { type: String },
 
     age: { type: Number, required: true, },
@@ -62,11 +62,11 @@ patientSchema.statics.patientIsUrgent = function () { // 4/17/2021
     // custom query goes here: for urgent=true 
     return this.find({ urgent: true });
 }
-
+/*
 patientSchema.statics.patientEmail = function (email) { // 4/17/2021 
     // custom query goes here: for urgent=true 
     return this.find({ email: { email });
-}
+}*/
 
 
 

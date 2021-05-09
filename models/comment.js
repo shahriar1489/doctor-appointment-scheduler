@@ -3,7 +3,7 @@ let Appointment = require("./appointment")
 let Doctor = require("./doctor")
 
 var commentSchema = Schema({
-    comment: { type: string, required: true },
+    comment: { type: String, required: true },
     //timestamp: {} add timestamp soon!
 
     appointment: {

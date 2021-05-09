@@ -27,7 +27,7 @@ var appointmentSchema = Schema({
 
     note: {
         type: String, trim: true,
-    }
+    },
 
 
     comments: [{
