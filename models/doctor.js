@@ -10,14 +10,13 @@ let Patient = require("./patient")
 // Doctor -> name, address (composite attribute) , speciality, phone - give address to patient
 var doctorSchema = Schema({
     //_id = Schema.Types.ObjectId,
-    email: { type: String, trim: true, required: true, unique: true },
+    username: { type: String, trim: true, required: true, unique: true },
     passwordHash: { type: String },
 
     first_name: { type: String, trim: true, required: true },
     last_name: { type: String, trim: true, required: true },
     // age: { type: Number, }
-    qualification: { type: String, required: true, trim: true },
-    specialization: { type: String, required: true, trim: true },
+
 
     //appointments: []//
     /*

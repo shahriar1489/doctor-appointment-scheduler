@@ -142,21 +142,6 @@ app.post('/doctor', function (req, res) { // for patient registration
 });
 */
 
-// Use the code from patient model
-app.post('doctor', function (req, res) {
-    console.log("Doctor: " + JSON.stringify(req.body.doctor));
-    var newDoctor = new doctorModel(req.body.doctor);
-
-    newDoctor.save().then(function () {
-        res.redirect("/doctor")
-    }).catch(function (err) {
-        res.err("Failed to add new patient to db!")
-    })
-})
-
-
-
-
 // local strategy register, checks for existing username, otherwise saves username and password
 app.post('/patient', function (req, res) { // for patient registration
 
@@ -171,16 +156,13 @@ app.post('/patient', function (req, res) { // for patient registration
     var blood_group = req.body.patient.blood_group;
     var age = req.body.patient.age;
 
-    var username = req.body.patient.username;
-    var password = req.body.patient.password;
     //const password = req.body.patient.password;
 
     console.log('first_name: ' + first_name);
     console.log('last_name: ' + last_name);
     console.log('username: ' + username);
     console.log('blood: ' + blood_group);
-    console.log('age: ' + age)
-
+    console.log('age: ' + age);
 
     //console.log("Doctor: " + JSON.stringify(req.body.doctor));
     //var newDoctor = new doctorModel(req.body.doctor); // Q. What is this doing? 
@@ -211,37 +193,123 @@ app.post('/patient', function (req, res) { // for patient registration
     });
 });
 
+// local strategy register, checks for existing username, otherwise saves username and password
+app.post('/doctor', function (req, res) { // for patient registration
+
+    // Take all the patient information first 
+    var username = req.body.doctor.username;
+    var password = req.body.doctor.password;
+    //const password = req.body.patient.password;
+
+    var first_name = req.body.doctor.first_name;
+    var last_name = req.body.doctor.last_name;
+
+    var specialization = req.body.doctor.specialization;
+    var qualification = req.body.doctor.qualification;
+
+
+    // age and blood_group are not relevant for doctors, so- we address it here
+
+    var blood_group = 'B+';
+    var age = 35;
+
+    //const password = req.body.patient.password;
+
+    console.log('first_name: ' + first_name);
+    console.log('last_name: ' + last_name);
+    console.log('username: ' + username);
+    console.log('qualification: ' + qualification);
+    console.log('specialization: ' + specialization);
+    //console.log('blood: ' + blood_group);
+    //console.log('age: ' + age);
+
+    patientModel.create({
+        username: username, password: password,
+        first_name: first_name, last_name: last_name,
+        blood_group: blood_group, age: age,
+        role: 'doctor', specialization: specialization,
+        qualification: qualification
+    }).then(user => { // I need to pass the created model. What will it be? 
+        console.log("Registered doctor: " + username);
+        req.login(user, err => {
+            if (err) next(err);
+            else res.redirect("/");
+        });
+    }).catch(err => {
+        if (err.name === "ValidationError") {
+            console.log("Sorry, that username for is already taken.");
+            res.redirect("/");
+        } else next(err);
+    });
+});
+
+
+app.get("/doctor", function (req, res) {
+    /*
+        patientModel.listAllDoctors().then(function (doctors) {
+            res.render("pages/doctor", { doctors: doctors });
+        }).catch(function (error) {
+            res.error("Something went wrong!" + error);
+        });
+    */
+
+    patientModel.listAllDoctors().then(function (doctors) {
+        res.render("pages/doctor", { doctors: doctors });
+    }).catch(function (error) {
+        res.error("Something went wrong!" + error);
+    });
+});
+
+
+
+
+app.get("/doctor_form", function (req, res) { // SR: working on this now 
+    res.render("pages/doctor_form.ejs");
+});
+
+
 // login, username and password are extracted from the post request
 app.post("/patient_login",
-
-
-
     passport.authenticate("local", { // 
         successRedirect: "/",
-        failureRedirect: "/patient_login"
+        failureRedirect: "/patient_login",
+
     })
 );
+
 
 app.get("/patient_login", function (req, res) {
     res.render("pages/patient_login");
 });
 
-app.get("/patient", checkLogin, function (req, res) {
+app.get("/patient", function (req, res) {
     patientModel.listAllPatients().then(function (patients) {
         res.render("pages/patient", { patients: patients });
     }).catch(function (error) {
         res.error("Something went wrong!" + error);
     });
-})
+});
+
+app.get('/make_appointments', function (req, res) {
+    res.render("pages/index");
+});
 
 
-app.get("/doctor", function (req, res) {
-    doctorModel.listAllDoctors().then(function (doctors) {
-        res.render("pages/doctor", { doctors: doctors });
-    }).catch(function (error) {
-        res.error("Something went wrong!" + error);
-    });
-})
+/*
+
+function (req, res) {
+
+    // check if password is valid here...
+    var password = req.body.patient.password;
+
+    var valid_password = false;
+    valid_password = patientModel.validPassword(password);
+    if (valid_password) {
+        console.log('password is valid');
+    }
+*/
+
+
 
 
 
@@ -279,6 +347,8 @@ app.get("/patient_form", function (req, res) {
 })
 
 
+
+/*
 app.get("/patient_custom_form", function (req, res) {
     res.render("pages/custom_query_patient.ejs")
 })
@@ -287,7 +357,7 @@ app.get("/patient_urgent", function (req, res) {
     //res.send('new page!!!')
     res.render('pages/patient_urgent.ejs')
 })
-
+*/
 app.get("/patient_urgent_query_return", function (req, res) {
     console.log("You're getting this because ajax called me")
     console.log(JSON.stringify(req.query.urgent)) // pass the information here.... 
@@ -320,29 +390,10 @@ app.get("/patient_urgent_query_return", function (req, res) {
     //console.log('' q.length);
 })
 
-
-
-app.get("/doctor_form", function (req, res) {
-    res.render("pages/doctor_form.ejs");
-})
-
-
 app.get("/", function (req, res) {
     //res.send('no more hellos, please!')
-    console.log(`GET (/) request at ${Date.now}`)
+    //    console.log(`GET (/) request at ${Date.now}`)
     res.render("pages/appointments.ejs");
-});
-
-
-app.post('/car', function (req, res) {
-    console.log("Car: " + JSON.stringify(req.body.car));
-    var newCar = new carModel(req.body.car);
-
-    newCar.save().then(function () {
-        //res.send("Added new car to database!");
-    }).catch(function (err) {
-        res.err("Failed to add new car to database!");
-    });
 });
 
 /*
@@ -367,6 +418,7 @@ app.post('/patient', function (req, res) {
 */
 
 app.post('/custom_query_patient', function (req, res) {
+
     console.log(JSON.stringify(req.body))
     console.log(JSON.stringify(req.body.patient))
     console.log(JSON.stringify(req.body.patient.age))
@@ -431,6 +483,7 @@ app.post('/patient_urgent', function (req, res) { //4/17/2021
 })
 */
 
+/*
 // post doctor
 app.post('/doctor', function (req, res) {
     console.log("Doctor: " + JSON.stringify(req.body.doctor));
@@ -442,7 +495,7 @@ app.post('/doctor', function (req, res) {
         res.err("Failed to add new doctor to database!");
     });
 });
-
+*/
 
 //app.get
 app.listen(port, function () {

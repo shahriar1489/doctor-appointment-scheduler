@@ -12,13 +12,14 @@ let patientSchema = new mongoose.Schema({
     last_name: { type: String, required: true },
 
     username: { type: String, required: true, unique: true }, //
-    passwordHash: { type: String },
+    passwordHash: { type: String, required: true },
 
     age: { type: Number, required: true, },
-    blood_group: { type: String, required: true, enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] }, // enum the blood groups  
-    /*
-        //urgent: { type: Boolean, required: true, default: true },
-    */
+    blood_group: { type: String, required: true, enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], default: 'A+' }, // enum the blood groups  
+
+    qualification: { type: String, required: true, trim: true, default: 'patient' },
+    specialization: { type: String, required: true, trim: true, default: 'patient' },
+
     role: { type: String, required: true, enum: ['doctor', 'patient'] },
 
     appointments: [],//  one patient can have many appointments     
@@ -42,11 +43,16 @@ patientSchema.virtual("password").set(function (value) {
 
 
 // Queries are below 
-patientSchema.statics.listAllPatients = function () {
-    return this.find({});
+
+patientSchema.statics.listAllDoctors = function () {
+    return this.find({ role: 'doctor' });
 };
 
-// 
+
+patientSchema.statics.listAllPatients = function () {
+    return this.find({ role: 'patient' });
+};
+
 
 patientSchema.statics.patientAge = function (ag) {
     // custom query goes here : for patient>60 

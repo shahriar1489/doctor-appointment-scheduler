@@ -9,7 +9,8 @@
     <ul>
         <% for(doctor of doctors) { %>
             <li>
-                <%= doctor.first_name + " " + doctor.last_name + " " + doctor.present %>
+                <%= doctor.first_name + " " + doctor.last_name + " " + doctor.qualification+ " " + doctor.specialization
+                    %>
             </li>
             <% } %>
     </ul>

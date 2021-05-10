@@ -1,14 +1,16 @@
 <html>
 
-<head></head>
+<head>
+    <title>Doctor Registration Form</title>
+</head>
 
 <body>
-    <h1>Test Form:</h1>
+    <h1>Doctor Registration Form:</h1>
     <form method="post" action="/doctor">
         First Name: <input type="text" name="doctor[first_name]"><br>
         Last Name: <input type="text" name="doctor[last_name]"><br>
 
-        Email: <input type='text' name='doctor[email]'><br>
+        Email: <input type='text' name='doctor[username]'><br>
         Password: <input type='password' name='doctor[password]'><br>
 
 
@@ -21,11 +23,11 @@
 
 </html>
 
-first_name: { type: String, trim: true, required: true },
-last_name: { type: String, trim: true, required: true },
-age: { type: Number, }, // add restriction
-qualification: { type: String, required: true, trim: true },
-specialization: { type: String, required: true, trim: true },
+<!-- first_name: { type: String, trim: true, required: true }, -->
+<!-- last_name: { type: String, trim: true, required: true }, -->
+<!-- age: { type: Number, }, // add restriction -->
+<!-- qualification: { type: String, required: true, trim: true }, -->
+<!-- specialization: { type: String, required: true, trim: true }, -->
 
 <!-- 
 
