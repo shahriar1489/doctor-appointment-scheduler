@@ -3,7 +3,7 @@ let mongoose = require('mongoose'), Schema = mongoose.Schema;
 const uniqueValidator = require("mongoose-unique-validator");
 const findOrCreate = require('mongoose-findorcreate')
 const bcrypt = require("bcrypt");
-
+const passportLocalMongoose = require('passport-local-mongoose');
 
 let patientSchema = new mongoose.Schema({
     //doctor: { type: Schema.Types.ObjectId, ref: 'Doctor' }, // keeping mongoose.ObjectId, returns no error
@@ -30,6 +30,9 @@ let patientSchema = new mongoose.Schema({
 patientSchema.index({ username: 1, googleId: 1 }, { unique: true });
 patientSchema.plugin(uniqueValidator); // I assume it checks if username is unique in db 
 patientSchema.plugin(findOrCreate); // 
+
+// Add the passportLocal pluging below
+patientSchema.plugin(passportLocalMongoose); // call this before patientModel.model(...) as per documentation
 
 //check the password against the saved salted hash
 patientSchema.methods.validPassword = function (password) {

@@ -1,11 +1,12 @@
 let express = require("express");
 let app = express();
 let mongoose = require("mongoose");
-const checkLogin = require("./middlewares/checkLogin");
+let passportLocalMongoose = require('passport-local-mongoose');
+// const checkLogin = require("./middlewares/checkLogin");
+let connectEnsureLogin = require('connect-ensure-login');
 
 // call the models 
 let patientModel = require("./models/patient")
-let doctorModel = require("./models/doctor")
 let appointmentModel = require('./models/appointment')
 
 const port = 27017;
@@ -15,6 +16,18 @@ app.use(express.urlencoded({ extended: true })); // this line
 app.use(express.json());
 app.use(express.static('public')); // 
 
+// body parser and express-session package installation
+let bodyParser = require('body-parser');
+let expressSession = require('express-session')({
+    secret: 'secret',
+    resave: false, // The resave field forces the session to be saved back to the session store
+    saveUninitialized: false //the saveUninitialized field forces a session that is “uninitialized” to be saved to the store
+});
+app.use(expressSession);
+//app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
+
+
 // Set up default mongoose connection 
 var mongoDB = 'mongodb://127.0.0.1/new_database';
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -23,6 +36,8 @@ mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+//patientModel.plugin(passportLocalMongoose); //
 
 // Authentication code is below 
 
@@ -52,7 +67,7 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (userId, done) {
     var patientFound = false;
     // Search patient,
-    Patient.findById(userId, (err, user) => {
+    patientModel.findById(userId, (err, user) => {
         console.log('In callback for Patient deserialization')
         done(err, user)
     });
@@ -274,6 +289,15 @@ app.get("/doctor_login", function (req, res) {
 });
 
 
+// 
+app.get('/private',
+    connectEnsureLogin.ensureLoggedIn(),
+    (req, res) => {
+        res.send('hey yo!');
+    }//res.sendFile('html/private.html', { root: __dirname })
+);
+
+
 
 // login, username and password are extracted from the post request
 app.post("/patient_login",
@@ -300,7 +324,24 @@ app.get("/patient", function (req, res) {
     });
 });
 
+
+app.get('/set_appointments', function (req, res) {
+    // Need Doctor information
+
+
+
+});
+
+
+
+
 app.get('/make_appointments', function (req, res) {
+
+    // redirect to this route after patient login
+
+
+    // will show doctors in link tag 
+
     res.render("pages/index");
 });
 

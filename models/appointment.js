@@ -9,12 +9,12 @@ let Comment = require("./comment");
 // Appointment -> id, time, foreign key(s): date(many-to-one), doctor(one-to-one), patient(one-to-one) 
 var appointmentSchema = Schema({
     valid: { type: Boolean, default: true }, // -->> the doctor overrides this 
-
+    taken: { type: Boolean, default: false },
 
     //date_time: {}, 
     //take: { type: Date, default: Date.now, required: true }, ->> create 10 appointments per day 
 
-    taken: { type: Boolean, default: false },
+
 
     patient: {
         type: Schema.Types.ObjectId,
