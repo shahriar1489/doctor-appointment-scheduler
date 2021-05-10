@@ -209,19 +209,14 @@ app.post('/doctor', function (req, res) { // for patient registration
 
 
     // age and blood_group are not relevant for doctors, so- we address it here
-
     var blood_group = 'B+';
     var age = 35;
-
-    //const password = req.body.patient.password;
 
     console.log('first_name: ' + first_name);
     console.log('last_name: ' + last_name);
     console.log('username: ' + username);
     console.log('qualification: ' + qualification);
     console.log('specialization: ' + specialization);
-    //console.log('blood: ' + blood_group);
-    //console.log('age: ' + age);
 
     patientModel.create({
         username: username, password: password,
@@ -243,7 +238,6 @@ app.post('/doctor', function (req, res) { // for patient registration
     });
 });
 
-
 app.get("/doctor", function (req, res) {
     /*
         patientModel.listAllDoctors().then(function (doctors) {
@@ -261,11 +255,24 @@ app.get("/doctor", function (req, res) {
 });
 
 
-
-
 app.get("/doctor_form", function (req, res) { // SR: working on this now 
     res.render("pages/doctor_form.ejs");
 });
+
+// login, username and password are extracted from the post request
+app.post("/doctor_login",
+    passport.authenticate("local", { // 
+        successRedirect: "/",
+        failureRedirect: "/doctor_login", // GET
+
+    })
+);
+
+
+app.get("/doctor_login", function (req, res) {
+    res.render("pages/patient_login");
+});
+
 
 
 // login, username and password are extracted from the post request
@@ -282,6 +289,9 @@ app.get("/patient_login", function (req, res) {
     res.render("pages/patient_login");
 });
 
+
+
+
 app.get("/patient", function (req, res) {
     patientModel.listAllPatients().then(function (patients) {
         res.render("pages/patient", { patients: patients });
@@ -293,23 +303,6 @@ app.get("/patient", function (req, res) {
 app.get('/make_appointments', function (req, res) {
     res.render("pages/index");
 });
-
-
-/*
-
-function (req, res) {
-
-    // check if password is valid here...
-    var password = req.body.patient.password;
-
-    var valid_password = false;
-    valid_password = patientModel.validPassword(password);
-    if (valid_password) {
-        console.log('password is valid');
-    }
-*/
-
-
 
 
 
