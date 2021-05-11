@@ -10,11 +10,11 @@ let Comment = require("./comment");
 var appointmentSchema = Schema({
     valid: { type: Boolean, default: true }, // -->> the doctor overrides this 
     taken: { type: Boolean, default: false },
-
-    //date_time: {}, 
-    //take: { type: Date, default: Date.now, required: true }, ->> create 10 appointments per day 
-
-
+    slot: {
+        type: String,
+        required: true,
+        enum: ['17:00-17:25', '17:35-18:00', '18:10-18:35', '18:45-19:10', '19:20-19:45']
+    },
 
     patient: {
         type: Schema.Types.ObjectId,
@@ -28,7 +28,6 @@ var appointmentSchema = Schema({
     note: {
         type: String, trim: true,
     },
-
 
     comments: [{
         type: mongoose.Schema.Types.ObjectId,

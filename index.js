@@ -157,6 +157,8 @@ app.post('/doctor', function (req, res) { // for patient registration
 });
 */
 
+const slots = ['17:00-17:25', '17:35-18:00', '18:10-18:35', '18:45-19:10', '19:20-19:45']
+
 // local strategy register, checks for existing username, otherwise saves username and password
 app.post('/patient', function (req, res) { // for patient registration
 
@@ -206,6 +208,8 @@ app.post('/patient', function (req, res) { // for patient registration
             res.redirect("/");
         } else next(err);
     });
+
+
 });
 
 // local strategy register, checks for existing username, otherwise saves username and password
@@ -256,17 +260,74 @@ app.post('/doctor', function (req, res) { // for patient registration
 app.get("/doctor", function (req, res) {
     /*
         patientModel.listAllDoctors().then(function (doctors) {
+  s          res.render("pages/doctor", { doctors: doctors });
+        }).catch(function (error) {
+            res.error("Something went wrong!" + error);
+        });
+    */
+    /*    
+        var firoz;
+    
+        // query to get Dr. Firoz using statics 
+        patientModel.getDrFiroz().then(function (doctors) {
+            firoz = doctors;
+            //console.log('In static function.\n' + firoz);
+            console.log('firoz.username :' + doctors[0].username);
+            res.render("pages/doctor", { doctors: doctors });
+        }).catch(function (error) {
+            res.error("Something went wrong!" + error);
+        });
+    
+        console.log('Outside static function: ' + firoz);
+    */
+
+
+    var firoz = patientModel.findOne({ username: 'firoz@gmail.com' };
+
+
+
+
+
+
+
+
+
+    // query using model and callback 
+    // using callback
+    /*
+        Adventure.findOne({ country: 'Croatia' }, function (err, adventure) {
+    
+        });
+    
+        // using async/await 
+        async function requestWithRetry(url) {
+            const MAX_RETRIES = 10;
+            for (let i = 0; i <= MAX_RETRIES; i++) {
+                try {
+                    return await request(url);
+                } catch (err) {
+                    const timeout = Math.pow(2, i);
+                    console.log('Waiting', timeout, 'ms');
+                    await wait(timeout);
+                    console.log('Retrying', err.message, i);
+                }
+            }
+        }
+    */
+    /* var firoz = async function getDrFiroz() {
+         console.log('inside aync function');
+         return await patientModel.findOne({ username: 'firoz@gmail.com' }).exec();
+ 
+     }*/
+
+    /*
+        patientModel.listAllDoctors().then(function (doctors) {
             res.render("pages/doctor", { doctors: doctors });
         }).catch(function (error) {
             res.error("Something went wrong!" + error);
         });
     */
 
-    patientModel.listAllDoctors().then(function (doctors) {
-        res.render("pages/doctor", { doctors: doctors });
-    }).catch(function (error) {
-        res.error("Something went wrong!" + error);
-    });
 });
 
 
@@ -325,8 +386,44 @@ app.get("/patient", function (req, res) {
 });
 
 
-app.get('/set_appointments', function (req, res) {
+app.post('/set_appointments', function (req, res) {
     // Need Doctor information
+
+    const tomorrow = new Date()
+    // add 1 day to today
+    tomorrow.setDate(new Date().getDate() + 1)
+    console.log(tomorrow)
+
+    // at this point, I have tomorrow's date 
+
+    // valid, taken, slot, patient, doctor, note
+    // foreign key: comments 
+
+    var valid = true;
+    var taken = false;
+
+
+
+
+
+    // use async/await to add appointment
+    patientModel.create({
+        username: username, password: password,
+        first_name: first_name, last_name: last_name,
+        blood_group: blood_group, age: age,
+        role: 'patient'
+    }).then(user => { // I need to pass the created model. What will it be? 
+        console.log("Registered patient: " + username);
+        req.login(user, err => {
+            if (err) next(err);
+            else res.redirect("/");
+        });
+    }).catch(err => {
+        if (err.name === "ValidationError") {
+            console.log("Sorry, that username for is already taken.");
+            res.redirect("/");
+        } else next(err);
+    });
 
 
 

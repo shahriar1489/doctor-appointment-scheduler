@@ -1,9 +1,14 @@
-
 let mongoose = require('mongoose'), Schema = mongoose.Schema;
+
+let Appointment = require('./appointment.js');
+
 const uniqueValidator = require("mongoose-unique-validator");
 const findOrCreate = require('mongoose-findorcreate')
 const bcrypt = require("bcrypt");
 const passportLocalMongoose = require('passport-local-mongoose');
+
+
+
 
 let patientSchema = new mongoose.Schema({
     //doctor: { type: Schema.Types.ObjectId, ref: 'Doctor' }, // keeping mongoose.ObjectId, returns no error
@@ -12,6 +17,7 @@ let patientSchema = new mongoose.Schema({
     last_name: { type: String, required: true },
 
     username: { type: String, required: true, unique: true }, //
+    phone: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
 
     age: { type: Number, required: true, },
@@ -22,7 +28,10 @@ let patientSchema = new mongoose.Schema({
 
     role: { type: String, required: true, enum: ['doctor', 'patient'] },
 
-    appointments: [],//  one patient can have many appointments     
+    appointments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Appointment"
+    }],//  one patient can have many appointments     
 });
 
 
@@ -77,7 +86,9 @@ patientSchema.statics.patientEmail = function (email) { // 4/17/2021
     return this.find({ email: { email });
 }*/
 
-
+patientSchema.statics.getDrFiroz = function () {
+    return this.find({ username: 'firoz@gmail.com' });
+}
 
 var patientModel = mongoose.model('patient', patientSchema);
 
