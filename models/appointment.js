@@ -20,7 +20,7 @@ var appointmentSchema = Schema({
     slot: { type: String, }, //required: true, enum: [{ "slot`": "17:00-17:25" }, { "slot`": "17:35-18:00" }, { "slot`": "18:10-18:35" }, { "slot`": "18:45-19:10" }, { "slot`": "19:20-19:45" }] },
 
     //patient: { type: Schema.Types.ObjectId, ref: 'Patient' }, // one patient 
-    //doctor: { type: Schema.Types.ObjectId, ref: 'Patient' }, // one doctor 
+    doctor: { type: Schema.Types.ObjectId, ref: 'Patient' }, // one doctor 
     //19:20-19:45
     //note: { type: String, trim: true, },
 

@@ -379,37 +379,38 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
     const tomorrow = new Date()
     // add 1 day to today
     tomorrow.setDate(new Date().getDate() + 1);
-    console.log(tomorrow);
+    //console.log(tomorrow);
 
     // at this point, I have tomorrow's date 
 
     // valid, taken, slot, patient, doctor, note
     // foreign key: comments 
-    slot = JSON.stringify(req.body); // req.body.slot does not return anything
-
+    var slot = JSON.stringify(req.body); // req.body.slot does not return anything
+    var doctor = JSON.stringify(req.user._id);
     var datetime = tomorrow.toDateString() + ' ' + slot;
     var date = tomorrow;
 
-    console.log('slot: ' + slot);
-    console.log('slot type: ' + typeof (slot));
+    //console.log('slot: ' + slot);
+    //console.log('slot type: ' + typeof (slot));
 
-    console.log('datetime: ' + datetime);
-    console.log('datetime type: ' + typeof (datetime));
+    //console.log('datetime: ' + datetime);
+    //console.log('datetime type: ' + typeof (datetime));
 
-    console.log('tomorrow: ' + tomorrow);
+    // console.log('tomorrow: ' + tomorrow);
 
-
+    console.log('doctor id :' + doctor);
+    console.log('typeof doctor id: ' + typeof (doctor))
     //datetime (pk) , date, valid, taken, patient, doctor, note, comments
 
     appointmentModel.create({
         //username: username, password: password,
         //first_name: first_name, last_name: last_name,
         //blood_group: blood_group, age: age,
-        date: tomorrow,
-        datetime: datetime,
-        valid: true,
-        taken: false,
+        date: tomorrow, datetime: datetime,
+        valid: true, taken: false,
         slot: slot,
+        //doctor: doctor, // not working 
+        doctor: req.user._id,
     }).then(user => { // I need to pass the created model. What will it be? 
         console.log("Registered appointment: " + user);
         req.login(user, err => {
