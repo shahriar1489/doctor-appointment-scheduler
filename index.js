@@ -93,30 +93,6 @@ const local = new LocalStrategy((username, password, done) => {
 });
 
 passport.use("local", local);
-/*
-app.post('/set_appointment', function (req, res) {
-    // 1. Get the current date and day 
-    d = new Date();
-
-    // 2. i = d.getDay()+1  : set appointments from tomorrow 
-
-    // Logic: Sunday is 0, Monday is 1, and so on. 
-    var seven = 7;
-    var n;
-    for (i = d.getDay() + 1; ; i++) {
-        n = i;
-        if (i > 6) {
-            n = seven - i;
-        }
-        console.log(n);
-    }
-
-    // 3. Render to appointment page 
-
-
-});
-*/
-
 // copy the code above to patient.js in routes 
 
 
@@ -365,6 +341,14 @@ app.get("/patient", function (req, res) {
     });
 });
 
+app.get("/test_populate", function (req, res, next) {
+    patientModel.populateTest().then(function (patients) {
+        res.render("pages/patient", { patients: patients });
+    }).catch(function (err) {
+        res.error("Something went wrong!" + error);
+    })
+});
+
 
 app.get('/set_appointment', function (req, res) {
     res.render("pages/set_appointment");
@@ -384,7 +368,7 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
     // at this point, I have tomorrow's date 
 
     // valid, taken, slot, patient, doctor, note
-    // foreign key: comments 
+    // foreign key: patient, doctor, comments 
     var slot = JSON.stringify(req.body); // req.body.slot does not return anything
     var doctor = JSON.stringify(req.user._id);
     var datetime = tomorrow.toDateString() + ' ' + slot;
@@ -403,13 +387,9 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
     //datetime (pk) , date, valid, taken, patient, doctor, note, comments
 
     appointmentModel.create({
-        //username: username, password: password,
-        //first_name: first_name, last_name: last_name,
-        //blood_group: blood_group, age: age,
         date: tomorrow, datetime: datetime,
         valid: true, taken: false,
         slot: slot,
-        //doctor: doctor, // not working 
         doctor: req.user._id,
     }).then(user => { // I need to pass the created model. What will it be? 
         console.log("Registered appointment: " + user);
@@ -427,16 +407,31 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
 });
 
 
-
-
-app.get('/make_appointments', function (req, res) {
-
+app.get('/make_appointments', function (req, res, next) {
     // redirect to this route after patient login
-
-
     // will show doctors in link tag 
+    /*
+        Things I want here: 
+        1. Available Appointment Slots 
+        2. Doctor Name- from using populate. NOT _id 
+    */
+    /*
+        patientModel
+            .findOne({ username: 'firoz@gmail.com' })
+            .populate("appointments") // key to populate
+            .then(user => {
+                console.log('In then: ' + user);
+                res.json(user);
+                res.render(JSON.stringify(user));
+            }).catch(err => {
+                console.log('Error: ' + Error);
+                res.send(err)
+            });
+    */
 
-    res.render("pages/index");
+
+    //console.log(patientModel.populated('appointments'));
+    res.render('keep testing');
 });
 
 
@@ -465,11 +460,11 @@ app.get("/senior_patient", function (req, res) {
         res.error("Something went wrong!" + error);
     });
 })
-
+/*
 app.get("/appointment_form", function (req, res) { // for patients
     res.render("pages/appoinment_form.ejs");
 })
-
+*/
 app.get("/patient_form", function (req, res) {
     res.render("pages/patient_form.ejs");
 })
@@ -490,37 +485,10 @@ app.get("/patient_urgent_query_return", function (req, res) {
     console.log("You're getting this because ajax called me")
     console.log(JSON.stringify(req.query.urgent)) // pass the information here.... 
 
-    //console.log(JSON.stringify(req.body.patient))
-    //console.log(JSON.stringify(req.body.patient.age))
-    //console.log(JSON.stringify(req.body.patient.first_name))
-    //var age = 
-
-    //var age = parseInt(JSON.stringify(req.body.patient.age))
-    //console.log('input age: ', JSON.stringify(req.body.patient.age))
-    //console.log('typeof age', typeof (JSON.stringify(req.body.patient.age)))
-
-    //var age = parseInt(JSON.stringify(req.body.patient.age))
-    //console.log('after into conv, ', age);
-    //console.log('test parse:', typeof (parseInt("3")));
-
-    //var age_ = parseInt(req.body.patient.age) // Q. Why input like this works? 
-    //console.log('age_: ', age_)
-    //console.log('typeof age_: ', typeof (age_))
-
-
-    //patientModel.patientAge(age_).then(function (patients) {
-    //    res.render("pages/patient", { patients: patients });
-
-    //}).catch(function (error) {
-    //    res.err("Something went wrong!" + error);
-    //console.log('error')
-    //});
-    //console.log('' q.length);
+    res.send('You are not using this route');
 })
 
 app.get("/", function (req, res) {
-    //res.send('no more hellos, please!')
-    //    console.log(`GET (/) request at ${Date.now}`)
     res.render("pages/appointments.ejs");
 });
 
@@ -530,7 +498,6 @@ app.post('/custom_query_patient', function (req, res) {
     console.log(JSON.stringify(req.body.patient))
     console.log(JSON.stringify(req.body.patient.age))
     console.log(JSON.stringify(req.body.patient.first_name))
-    //var age = 
 
     var age = parseInt(JSON.stringify(req.body.patient.age))
     //console.log('input age: ', JSON.stringify(req.body.patient.age))
@@ -554,18 +521,17 @@ app.post('/custom_query_patient', function (req, res) {
     });
     //console.log('' q.length);
 })
-
-// 
+/*
 app.get('/private',
     connectEnsureLogin.ensureLoggedIn('/patient_login'),
-
     (req, res) => {
 
         res.send(req.user);
     }//res.sendFile('html/private.html', { root: __dirname })
 );
-
+*/
 //app.get
 app.listen(port, function () {
     console.log("App listening on port " + port + "!");
 });
+

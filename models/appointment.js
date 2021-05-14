@@ -1,6 +1,6 @@
 let mongoose = require('mongoose'), Schema = mongoose.Schema;
 
-//let Patient = require("./patient");
+let Patient = require("./patient");
 //let Comment = require("./comment");
 
 //console.log(Patient);

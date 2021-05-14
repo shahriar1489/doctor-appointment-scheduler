@@ -90,6 +90,20 @@ patientSchema.statics.getDrFiroz = function () {
     return this.find({ username: 'firoz@gmail.com' });
 }
 
+patientSchema.statics.populateTest = function () {
+    return this.findOne({ username: 'firoz@gmail.com' })
+        .populate("appointments") // key to populate
+        .then(user => {
+            console.log('In then: ' + user);
+            res.json(user);
+            res.render(JSON.stringify(user));
+        }).catch(err => {
+            console.log('Error: ' + Error);
+            res.send(err)
+        });
+}
+
+
 var patientModel = mongoose.model('patient', patientSchema);
 
 module.exports = patientModel;
