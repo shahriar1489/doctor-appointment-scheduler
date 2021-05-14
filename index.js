@@ -96,43 +96,6 @@ passport.use("local", local);
 // copy the code above to patient.js in routes 
 
 
-/*
-app.post('/doctor', function (req, res) { // for patient registration
-
-    var email = req.body.doctor.email;
-    var password = req.body.doctor.password;
-
-    var first_name = req.body.doctor.first_name;
-    var last_name = req.body.doctor.last_name;
-
-    var specialization = req.body.doctor.specialization;
-    var qualification = req.body.doctor.qualification;
-
-    console.log('first_name: ' + first_name);
-    console.log('last_name: ' + last_name);
-
-    doctorModel.create({
-        email: email, password: password,
-        first_name: first_name, last_name: last_name,
-        specialization: specialization, qualification: qualification
-
-    }).then(user => { // I need to pass the created model. What will it be? 
-        console.log("Registered doctor, email: " + email);
-        req.login(user, err => {
-            if (err) next(err);
-            else res.redirect("/");
-        });
-    }).catch(err => {
-        if (err.name === "ValidationError") {
-            console.log("Sorry, that email for doctor registration for is already taken.");
-            res.redirect("/");
-        } else next(err);
-    });
-
-    // I have to find a way to save this 
-});
-
-*/
 const slots = ['17:00-17:25', '17:35-18:00', '18:10-18:35', '18:45-19:10', '19:20-19:45']
 
 // local strategy register, checks for existing username, otherwise saves username and password
@@ -317,8 +280,6 @@ app.post('/doctor', function (req, res) { // for patient registration
     });
 });
 
-
-
 app.get("/patient_login", function (req, res) {
     res.render("pages/patient_login");
 });
@@ -339,15 +300,6 @@ app.get("/patient", function (req, res) {
         res.error("Something went wrong!" + error);
     });
 });
-/*
-app.get("/test_populate", function (req, res, next) {
-    patientModel.populateTest().then(function (patients) {
-        res.render("pages/patient", { patients: patients });
-    }).catch(function (err) {
-        res.error("Something went wrong!" + error);
-    })
-});
-*/
 
 app.get('/set_appointment', function (req, res) {
     res.render("pages/set_appointment");
@@ -356,10 +308,9 @@ app.get('/set_appointment', function (req, res) {
 
 app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'), async function (req, res, next) {
     // Need Doctor information
-
     //    console.log('\t\tUser: ' + req.user._id);
 
-    const tomorrow = new Date()
+    const tomorrow = new Date();
     // add 1 day to today
     tomorrow.setDate(new Date().getDate() + 1);
     //console.log(tomorrow);
@@ -391,10 +342,10 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
         slot: slot,
         doctor: req.user._id,
 
-    })
+    });
 
     try {
-        const appointment = await newAppointment.save();
+        const appointment = await new_appointment.save();
         await patientModel.updateOne({
             _id: req.user._id
         }, {
