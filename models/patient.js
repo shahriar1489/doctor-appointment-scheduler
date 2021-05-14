@@ -17,7 +17,7 @@ let patientSchema = new mongoose.Schema({
     last_name: { type: String, required: true },
 
     username: { type: String, required: true, unique: true }, //
-    phone: { type: String, required: true, unique: true },
+    //    phone: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
 
     age: { type: Number, required: true, },

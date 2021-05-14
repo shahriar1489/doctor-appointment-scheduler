@@ -131,8 +131,8 @@ app.post('/doctor', function (req, res) { // for patient registration
 
     // I have to find a way to save this 
 });
-*/
 
+*/
 const slots = ['17:00-17:25', '17:35-18:00', '18:10-18:35', '18:45-19:10', '19:20-19:45']
 
 // local strategy register, checks for existing username, otherwise saves username and password
@@ -275,7 +275,6 @@ app.get("/doctor", function (req, res) {
 
 // local strategy register, checks for existing username, otherwise saves username and password
 app.post('/doctor', function (req, res) { // for patient registration
-
     // Take all the patient information first 
     var username = req.body.doctor.username;
     var password = req.body.doctor.password;
@@ -303,7 +302,7 @@ app.post('/doctor', function (req, res) { // for patient registration
         first_name: first_name, last_name: last_name,
         blood_group: blood_group, age: age,
         role: 'doctor', specialization: specialization,
-        qualification: qualification
+        qualification: qualification,
     }).then(user => { // I need to pass the created model. What will it be? 
         console.log("Registered doctor: " + username);
         req.login(user, err => {
@@ -340,7 +339,7 @@ app.get("/patient", function (req, res) {
         res.error("Something went wrong!" + error);
     });
 });
-
+/*
 app.get("/test_populate", function (req, res, next) {
     patientModel.populateTest().then(function (patients) {
         res.render("pages/patient", { patients: patients });
@@ -348,17 +347,17 @@ app.get("/test_populate", function (req, res, next) {
         res.error("Something went wrong!" + error);
     })
 });
-
+*/
 
 app.get('/set_appointment', function (req, res) {
     res.render("pages/set_appointment");
 });
 
 
-app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'), function (req, res, next) {
+app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'), async function (req, res, next) {
     // Need Doctor information
 
-    console.log('\t\tUser: ' + req.user._id);
+    //    console.log('\t\tUser: ' + req.user._id);
 
     const tomorrow = new Date()
     // add 1 day to today
@@ -386,6 +385,35 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
     console.log('typeof doctor id: ' + typeof (doctor))
     //datetime (pk) , date, valid, taken, patient, doctor, note, comments
 
+    var new_appointment = new appointmentModel({
+        date: tomorrow, datetime: datetime,
+        valid: true, taken: false,
+        slot: slot,
+        doctor: req.user._id,
+
+    })
+
+    try {
+        const appointment = await newAppointment.save();
+        await patientModel.updateOne({
+            _id: req.user._id
+        }, {
+            $push: {
+                appointments: appointment._id
+            }
+        });
+
+        res.status(200).json({
+            message: "Appointment was inserted successfully to Patient documnet!",
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "There was a server side error!",
+        });
+    }
+
+    /*
     appointmentModel.create({
         date: tomorrow, datetime: datetime,
         valid: true, taken: false,
@@ -393,6 +421,7 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
         doctor: req.user._id,
     }).then(user => { // I need to pass the created model. What will it be? 
         console.log("Registered appointment: " + user);
+    
         req.login(user, err => {
             if (err) next(err);
             else res.redirect("/");
@@ -403,9 +432,8 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
             res.redirect("/");
         } else next(err);
     });
-
+    */
 });
-
 
 app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'), function (req, res, next) { // WORKS: work in progress
     // redirect to this route after patient login
@@ -429,9 +457,46 @@ app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'
                 });
             }
         });
+
+    //populate-path-patient
+    //and then 
+    //populate-path-appointment 
+
+    // I want to populate the Patient model with multiple Appointment ID 
 });
 
 
+//app.get('/make_appointments', function (req, res, next) { // WORKS: work in progress
+// redirect to this route after patient login
+// will show doctors in link tag 
+/*
+    Things I want here: 
+    1. Available Appointment Slots 
+    2. Doctor Name- from using populate. NOT _id 
+*/
+/*
+        appointmentModel.find({}) // try to put sth some value here 
+        .populate({
+            path: 'patient',
+            populate: { path: 'appointments' }
+        })
+        .exec((err, data) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    result: data,
+                    message: "Success",
+                });
+            }
+        });
+
+
+
+});
+*/
 
 app.get("/senior_patient", function (req, res) {
     // I get the query parameter from a POST request... 
