@@ -407,7 +407,7 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
 });
 
 
-app.get('/make_appointments', function (req, res, next) {
+app.get('/make_appointments', function (req, res, next) { // WORKS: work in progress
     // redirect to this route after patient login
     // will show doctors in link tag 
     /*
@@ -428,10 +428,44 @@ app.get('/make_appointments', function (req, res, next) {
                 res.send(err)
             });
     */
+    /*
+        appointmentModel
+            .findOne({ valid: true })
+            .populate("doctor") // key to populate
+            .then(user => {
+                console.log('In then: ' + user);
+                res.json(user);
+                res.render(JSON.stringify(user));
+            }).catch(err => {
+                console.log('Error: ' + Error);
+                res.send('ERROR' + err)
+            });
+        //console.log(patientModel.populated('appointments'));
+        //    res.render(app);
+    
+    */
+    appointmentModel.find({})
+        .populate("patient")
+        .select({
+            _id: 0,
+            _v: 0,
+            date: 0,
+        })
+        .limit(2)
+        .exec((err, data) => {
+            if (err) {
+                res.status(500).json({
+                    error: "There was a server side error!",
+                });
+            } else {
+                res.status(200).json({
+                    result: data,
+                    message: "Success",
+                });
+            }
+        });
 
 
-    //console.log(patientModel.populated('appointments'));
-    res.render('keep testing');
 });
 
 
