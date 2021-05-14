@@ -306,6 +306,7 @@ app.get('/set_appointment', function (req, res) {
 });
 
 
+// set_appointment is for doctors only 
 app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'), async function (req, res, next) {
     // Need Doctor information
     //    console.log('\t\tUser: ' + req.user._id);
@@ -386,7 +387,8 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
     */
 });
 
-app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'), function (req, res, next) { // WORKS: work in progress
+app.get('/make_appointments', /* connectEnsureLogin.ensureLoggedIn('/patient_login'),*/ function (req, res, next) {
+    // WORKS: work in progress
     // redirect to this route after patient login
     // will show doctors in link tag 
     /*
@@ -394,6 +396,7 @@ app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'
         1. Available Appointment Slots 
         2. Doctor Name- from using populate. NOT _id 
     */
+    //  var user = req.user._id; // appointment id 
     appointmentModel.find({}) // try to put sth some value here 
         .populate("patient")
         .exec((err, data) => {
@@ -426,7 +429,7 @@ app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'
     2. Doctor Name- from using populate. NOT _id 
 */
 /*
-        appointmentModel.find({}) // try to put sth some value here 
+    appointmentModel.find({}) // try to put sth some value here 
         .populate({
             path: 'patient',
             populate: { path: 'appointments' }
@@ -443,8 +446,6 @@ app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'
                 });
             }
         });
-
-
 
 });
 */
