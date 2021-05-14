@@ -407,7 +407,7 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
 });
 
 
-app.get('/make_appointments', function (req, res, next) { // WORKS: work in progress
+app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'), function (req, res, next) { // WORKS: work in progress
     // redirect to this route after patient login
     // will show doctors in link tag 
     /*
@@ -415,43 +415,8 @@ app.get('/make_appointments', function (req, res, next) { // WORKS: work in prog
         1. Available Appointment Slots 
         2. Doctor Name- from using populate. NOT _id 
     */
-    /*
-        patientModel
-            .findOne({ username: 'firoz@gmail.com' })
-            .populate("appointments") // key to populate
-            .then(user => {
-                console.log('In then: ' + user);
-                res.json(user);
-                res.render(JSON.stringify(user));
-            }).catch(err => {
-                console.log('Error: ' + Error);
-                res.send(err)
-            });
-    */
-    /*
-        appointmentModel
-            .findOne({ valid: true })
-            .populate("doctor") // key to populate
-            .then(user => {
-                console.log('In then: ' + user);
-                res.json(user);
-                res.render(JSON.stringify(user));
-            }).catch(err => {
-                console.log('Error: ' + Error);
-                res.send('ERROR' + err)
-            });
-        //console.log(patientModel.populated('appointments'));
-        //    res.render(app);
-    
-    */
-    appointmentModel.find({})
+    appointmentModel.find({}) // try to put sth some value here 
         .populate("patient")
-        .select({
-            _id: 0,
-            _v: 0,
-            date: 0,
-        })
-        .limit(2)
         .exec((err, data) => {
             if (err) {
                 res.status(500).json({
@@ -464,8 +429,6 @@ app.get('/make_appointments', function (req, res, next) { // WORKS: work in prog
                 });
             }
         });
-
-
 });
 
 
