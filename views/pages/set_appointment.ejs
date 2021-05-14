@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>Doctor Set Appointment</title>
+</head>
+
+<body>
+    <!-- datetime (pk) , date, valid, taken, patient, doctor, note, comments -->
+    <h1>Need the id/username of the doctor, other than that server takes care of it</h1>
+    <!--
+    <form method="post" action="/set_appointment">
+        First Name: <input type="text" name="doctor[first_name]"><br>
+        Last Name: <input type="text" name="doctor[last_name]"><br>
+
+        Email: <input type='text' name='doctor[username]'><br>
+        Password: <input type='password' name='doctor[password]'><br>
+
+
+        Qualification: <input type="text" name='doctor[qualification]'><br>
+        Specialization: <input type="text" name='doctor[specialization]'><br>
+
+        <input type="submit" value="Submit">
+    </form>
+    -->
+
+    <form method="post" action="/set_appointment">
+        <label for="appointment">Select an appointment slot for tomorrow:</label>
+        <select id="slots" name="slot`">
+            <option value="17:00-17:25">17:00-17:25</option>
+            <option value='17:35-18:00'>17:35-18:00</option>
+            <option value='18:10-18:35'>18:10-18:35</option>
+            <option value='18:45-19:10'>18:45-19:10</option>
+            <option value='19:20-19:45'>19:20-19:45</option>
+        </select>
+        <input type="submit">
+    </form>
+
+</body>
+
+</html>

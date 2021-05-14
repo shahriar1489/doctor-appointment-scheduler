@@ -212,6 +212,91 @@ app.post('/patient', function (req, res) { // for patient registration
 
 });
 
+app.get("/doctor_form", function (req, res) {
+    res.render("pages/doctor_form.ejs");
+});
+
+app.get("/doctor_login", function (req, res) {
+    res.render("pages/patient_login");
+});
+
+// login, username and password are extracted from the post request
+app.post("/doctor_login",
+    passport.authenticate("local", { // 
+        successRedirect: "/",
+        failureRedirect: "/doctor_login", // GET
+
+    })
+);
+
+app.get("/doctor", function (req, res) {
+
+    patientModel.listAllDoctors().then(function (doctors) {
+        res.render("pages/doctor", { doctors: doctors });
+    }).catch(function (error) {
+        res.error("Something went wrong!" + error);
+    });
+
+    /*    
+        var firoz;
+    
+        // query to get Dr. Firoz using statics 
+        patientModel.getDrFiroz().then(function (doctors) {
+            firoz = doctors;
+            //console.log('In static function.\n' + firoz);
+            console.log('firoz.username :' + doctors[0].username);
+            res.render("pages/doctor", { doctors: doctors });
+        }).catch(function (error) {
+            res.error("Something went wrong!" + error);
+        });
+    
+        console.log('Outside static function: ' + firoz);
+    */
+
+
+    //var firoz = patientModel.findOne({ username: 'firoz@gmail.com' });
+
+
+
+
+    // query using model and callback 
+    // using callback
+    /*
+        Adventure.findOne({ country: 'Croatia' }, function (err, adventure) {
+    
+        });
+    
+        // using async/await 
+        async function requestWithRetry(url) {
+            const MAX_RETRIES = 10;
+            for (let i = 0; i <= MAX_RETRIES; i++) {
+                try {
+                    return await request(url);
+                } catch (err) {
+                    const timeout = Math.pow(2, i);
+                    console.log('Waiting', timeout, 'ms');
+                    await wait(timeout);
+                    console.log('Retrying', err.message, i);
+                }
+            }
+        }
+    */
+    /* var firoz = async function getDrFiroz() {
+         console.log('inside aync function');
+         return await patientModel.findOne({ username: 'firoz@gmail.com' }).exec();
+ 
+     }*/
+
+    /*
+        patientModel.listAllDoctors().then(function (doctors) {
+            res.render("pages/doctor", { doctors: doctors });
+        }).catch(function (error) {
+            res.error("Something went wrong!" + error);
+        });
+    */
+
+});
+
 // local strategy register, checks for existing username, otherwise saves username and password
 app.post('/doctor', function (req, res) { // for patient registration
 
@@ -257,108 +342,11 @@ app.post('/doctor', function (req, res) { // for patient registration
     });
 });
 
-app.get("/doctor", function (req, res) {
-    /*
-        patientModel.listAllDoctors().then(function (doctors) {
-  s          res.render("pages/doctor", { doctors: doctors });
-        }).catch(function (error) {
-            res.error("Something went wrong!" + error);
-        });
-    */
-    /*    
-        var firoz;
-    
-        // query to get Dr. Firoz using statics 
-        patientModel.getDrFiroz().then(function (doctors) {
-            firoz = doctors;
-            //console.log('In static function.\n' + firoz);
-            console.log('firoz.username :' + doctors[0].username);
-            res.render("pages/doctor", { doctors: doctors });
-        }).catch(function (error) {
-            res.error("Something went wrong!" + error);
-        });
-    
-        console.log('Outside static function: ' + firoz);
-    */
 
 
-    var firoz = patientModel.findOne({ username: 'firoz@gmail.com' };
-
-
-
-
-
-
-
-
-
-    // query using model and callback 
-    // using callback
-    /*
-        Adventure.findOne({ country: 'Croatia' }, function (err, adventure) {
-    
-        });
-    
-        // using async/await 
-        async function requestWithRetry(url) {
-            const MAX_RETRIES = 10;
-            for (let i = 0; i <= MAX_RETRIES; i++) {
-                try {
-                    return await request(url);
-                } catch (err) {
-                    const timeout = Math.pow(2, i);
-                    console.log('Waiting', timeout, 'ms');
-                    await wait(timeout);
-                    console.log('Retrying', err.message, i);
-                }
-            }
-        }
-    */
-    /* var firoz = async function getDrFiroz() {
-         console.log('inside aync function');
-         return await patientModel.findOne({ username: 'firoz@gmail.com' }).exec();
- 
-     }*/
-
-    /*
-        patientModel.listAllDoctors().then(function (doctors) {
-            res.render("pages/doctor", { doctors: doctors });
-        }).catch(function (error) {
-            res.error("Something went wrong!" + error);
-        });
-    */
-
-});
-
-
-app.get("/doctor_form", function (req, res) { // SR: working on this now 
-    res.render("pages/doctor_form.ejs");
-});
-
-// login, username and password are extracted from the post request
-app.post("/doctor_login",
-    passport.authenticate("local", { // 
-        successRedirect: "/",
-        failureRedirect: "/doctor_login", // GET
-
-    })
-);
-
-
-app.get("/doctor_login", function (req, res) {
+app.get("/patient_login", function (req, res) {
     res.render("pages/patient_login");
 });
-
-
-// 
-app.get('/private',
-    connectEnsureLogin.ensureLoggedIn(),
-    (req, res) => {
-        res.send('hey yo!');
-    }//res.sendFile('html/private.html', { root: __dirname })
-);
-
-
 
 // login, username and password are extracted from the post request
 app.post("/patient_login",
@@ -369,14 +357,6 @@ app.post("/patient_login",
     })
 );
 
-
-app.get("/patient_login", function (req, res) {
-    res.render("pages/patient_login");
-});
-
-
-
-
 app.get("/patient", function (req, res) {
     patientModel.listAllPatients().then(function (patients) {
         res.render("pages/patient", { patients: patients });
@@ -386,46 +366,62 @@ app.get("/patient", function (req, res) {
 });
 
 
-app.post('/set_appointments', function (req, res) {
+app.get('/set_appointment', function (req, res) {
+    res.render("pages/set_appointment");
+});
+
+
+app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'), function (req, res, next) {
     // Need Doctor information
+
+    console.log('\t\tUser: ' + req.user._id);
 
     const tomorrow = new Date()
     // add 1 day to today
-    tomorrow.setDate(new Date().getDate() + 1)
-    console.log(tomorrow)
+    tomorrow.setDate(new Date().getDate() + 1);
+    console.log(tomorrow);
 
     // at this point, I have tomorrow's date 
 
     // valid, taken, slot, patient, doctor, note
     // foreign key: comments 
+    slot = JSON.stringify(req.body); // req.body.slot does not return anything
 
-    var valid = true;
-    var taken = false;
+    var datetime = tomorrow.toDateString() + ' ' + slot;
+    var date = tomorrow;
+
+    console.log('slot: ' + slot);
+    console.log('slot type: ' + typeof (slot));
+
+    console.log('datetime: ' + datetime);
+    console.log('datetime type: ' + typeof (datetime));
+
+    console.log('tomorrow: ' + tomorrow);
 
 
+    //datetime (pk) , date, valid, taken, patient, doctor, note, comments
 
-
-
-    // use async/await to add appointment
-    patientModel.create({
-        username: username, password: password,
-        first_name: first_name, last_name: last_name,
-        blood_group: blood_group, age: age,
-        role: 'patient'
+    appointmentModel.create({
+        //username: username, password: password,
+        //first_name: first_name, last_name: last_name,
+        //blood_group: blood_group, age: age,
+        date: tomorrow,
+        datetime: datetime,
+        valid: true,
+        taken: false,
+        slot: slot,
     }).then(user => { // I need to pass the created model. What will it be? 
-        console.log("Registered patient: " + username);
+        console.log("Registered appointment: " + user);
         req.login(user, err => {
             if (err) next(err);
             else res.redirect("/");
         });
     }).catch(err => {
         if (err.name === "ValidationError") {
-            console.log("Sorry, that username for is already taken.");
+            console.log("Sorry, that datetime for is already taken.");
             res.redirect("/");
         } else next(err);
     });
-
-
 
 });
 
@@ -527,27 +523,6 @@ app.get("/", function (req, res) {
     res.render("pages/appointments.ejs");
 });
 
-/*
-// post patient: .save - .then() is part of the promise notation
-app.post('/patient', function (req, res) {
-    console.log("Patient: " + JSON.stringify(req.body.patient)); // how we get data from client
-    var newPatient = new patientModel(req.body.patient); // 
-
-    // run the query here??? 
-
-    // do query - do callback.. 
-
-    newPatient.save().then(function () { // 1. Inform successful db entry 2. Redirect to patient page
-        // Use res.redirect
-        res.redirect("/patient")
-        //res.send("pages/patient", { patients: patients });
-        //res.render("pages/patient", { patients: patients });
-    }).catch(function (err) {
-        res.err("Failed to add new patient to database!");
-    })
-})
-*/
-
 app.post('/custom_query_patient', function (req, res) {
 
     console.log(JSON.stringify(req.body))
@@ -579,54 +554,15 @@ app.post('/custom_query_patient', function (req, res) {
     //console.log('' q.length);
 })
 
-/*
-app.post('/patient_urgent', function (req, res) { //4/17/2021
-    console.log(JSON.stringify(req.body))
-    //console.log(JSON.stringify(req.body.patient))
-    //console.log(JSON.stringify(req.body.patient.age))
-    //console.log(JSON.stringify(req.body.patient.first_name))
-    //var age = 
+// 
+app.get('/private',
+    connectEnsureLogin.ensureLoggedIn('/patient_login'),
 
-    //var age = parseInt(JSON.stringify(req.body.patient.age))
-    //console.log('input age: ', JSON.stringify(req.body.patient.age))
-    //console.log('typeof age', typeof (JSON.stringify(req.body.patient.age)))
+    (req, res) => {
 
-    //var age = parseInt(JSON.stringify(req.body.patient.age))
-    //console.log('after into conv, ', age);
-    //console.log('test parse:', typeof (parseInt("3")));
-
-    //var age_ = parseInt(req.body.patient.age) // Q. Why input like this works? 
-    //console.log('age_: ', age_)
-    //console.log('typeof age_: ', typeof (age_))
-
-
-    patientModel.patientIsUrgent().then(function (patients) {
-        res.render("pages/patient", { patients: patients });
-
-        //Instead of rendering new page, I will return the query output
-
-
-    }).catch(function (error) {
-        res.err("Something went wrong!" + error);
-        console.log('error')
-    });
-    //console.log('' q.length);
-})
-*/
-
-/*
-// post doctor
-app.post('/doctor', function (req, res) {
-    console.log("Doctor: " + JSON.stringify(req.body.doctor));
-    var newDoctor = new doctorModel(req.body.doctor); // Q. What is this doing? 
-
-    newDoctor.save().then(function () {
-        res.send("Added new doctor to database!");
-    }).catch(function (err) {
-        res.err("Failed to add new doctor to database!");
-    });
-});
-*/
+        res.send(req.user);
+    }//res.sendFile('html/private.html', { root: __dirname })
+);
 
 //app.get
 app.listen(port, function () {
