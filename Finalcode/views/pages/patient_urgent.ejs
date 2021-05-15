@@ -1,0 +1,61 @@
+<html>
+
+<head>
+    <title>Urgent Patients</title>
+</head>
+
+<body>
+    <div>
+        <h3>Urgent Patients</h3>
+        <p>
+            The following the patients with urgent need of medical attention
+        </p>
+
+        <p>
+        <form action="">
+            <select name="patients" onchange="showPatients(this.value)">
+                <option value="">Urgent Case?</option>
+                <option value="false">Not Urgent</option>
+                <option value="true">Urgent</option>
+            </select>
+        </form>
+
+        </p>
+    </div>
+
+    <div id="myList">
+        <h1>Patients: </h1>
+
+    </div>
+
+</body>
+
+</html>
+
+<script>
+    document.getElementById("myList").style.visibility = "hidden";
+
+    // Use the 
+    var see;
+    function showPatients(str) {
+        var xhttp;
+        if (str == "") {
+            //document.getElementById("txtHint").innerHTML = "";
+            return;
+        }
+
+        xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                //document.getElementById("myList").innerHTML = this.responseText; // the response from the server goes here
+                //console.log(this.responseText)
+                //see = this.responseText
+            }
+        };
+
+        xhttp.open("GET", "patient_urgent_query_return?urgent=" + str, true);
+        xhttp.send();
+    }
+
+    console.log(see);
+</script>
