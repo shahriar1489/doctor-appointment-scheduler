@@ -387,7 +387,7 @@ app.post('/set_appointment', connectEnsureLogin.ensureLoggedIn('/doctor_login'),
     */
 });
 
-app.get('/make_appointments', /* connectEnsureLogin.ensureLoggedIn('/patient_login'),*/ function (req, res, next) {
+app.get('/make_appointments', connectEnsureLogin.ensureLoggedIn('/patient_login'), function (req, res, next) {
     // WORKS: work in progress
     // redirect to this route after patient login
     // will show doctors in link tag 
